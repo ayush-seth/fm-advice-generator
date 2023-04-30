@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { type NextPage } from "next";
 import { Manrope } from "next/font/google";
 import Head from "next/head";
@@ -13,10 +14,13 @@ const manrope = Manrope({ subsets: ["latin"] });
 
 const Home: NextPage = () => {
   const [advice, setAdvice] = useState<Advice>();
+  const [loading, setLoading] = useState(false);
 
   async function getAdvice() {
+    setLoading(true);
     const res = await fetch("https://api.adviceslip.com/advice");
     const adv = (await res.json()) as { slip: Advice };
+    setLoading(false);
     setAdvice(adv.slip);
   }
 
@@ -48,8 +52,11 @@ const Home: NextPage = () => {
             <div className="ml-4 h-px grow bg-grayish-blue" />
           </div>
           <button
-            className="absolute -bottom-5 left-[calc(50%-22px)] grid h-11 w-11 place-items-center rounded-full bg-neon-green hover:shadow-[0_0_40px_-3px] hover:shadow-neon-green"
-            onClick={void getAdvice}
+            className={clsx(
+              "absolute -bottom-5 left-[calc(50%-22px)] grid h-11 w-11 place-items-center rounded-full bg-neon-green hover:shadow-[0_0_40px_-3px] hover:shadow-neon-green",
+              loading && "animate-spin ease-in"
+            )}
+            onClick={() => void getAdvice()}
           >
             <Image src="/icon-dice.svg" width={16} height={16} alt="" />
           </button>
